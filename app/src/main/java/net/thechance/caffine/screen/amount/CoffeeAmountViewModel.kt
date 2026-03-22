@@ -16,7 +16,8 @@ class CoffeeAmountViewModel: ViewModel(), CoffeeAmountInteractions {
 
     override fun onChangeCupSize(newSize: Int) {
         _state.update { it.copy(
-            cupSizeIndex = newSize
+            cupSizeIndex = newSize,
+            cupSizeInMl = getCupSizeInMl(newSize)
         ) }
     }
 
@@ -24,6 +25,15 @@ class CoffeeAmountViewModel: ViewModel(), CoffeeAmountInteractions {
         _state.update { it.copy(
             caffineAmountIndex = newAmount
         ) }
+    }
+
+    private fun getCupSizeInMl(sizeIndex: Int): Int {
+        return when(sizeIndex) {
+            0 -> 150
+            1 -> 200
+            2 -> 400
+            else -> throw Exception("Not supported cup size")
+        }
     }
 
 }
