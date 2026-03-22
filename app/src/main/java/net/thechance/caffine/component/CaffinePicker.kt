@@ -1,5 +1,7 @@
 package net.thechance.caffine.component
 
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,12 +38,16 @@ fun CaffinePicker(
     onChangeAmount: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ){
+    val animatedPosition by animateIntAsState(
+        targetValue = amount * 48,
+        animationSpec = tween(durationMillis = 600)
+    )
     Column(modifier) {
         SliderBar {
             Bubble(
                 modifier = Modifier.padding(8.dp)
                     .graphicsLayer{
-                        translationX = (48 * amount).dp.toPx()
+                        translationX = animatedPosition.dp.toPx()
                     }
             ) {
                 Icon(

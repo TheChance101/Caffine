@@ -1,5 +1,8 @@
 package net.thechance.caffine.component
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,11 +34,15 @@ fun SizePicker(
     onChangesSelectedOption: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val animatedPosition by animateIntAsState(
+        targetValue = selectedIndex * 48,
+        animationSpec = tween(durationMillis = 600)
+    )
     SliderBar(modifier) {
         Bubble(
             modifier = modifier.padding(8.dp)
                 .graphicsLayer{
-                    translationX = (48 * selectedIndex).dp.toPx()
+                    translationX = animatedPosition.dp.toPx()
                 }
         )
         Row(
@@ -62,14 +70,20 @@ private fun SingleOptionItem(
     isSelected: Boolean,
     modifier: Modifier = Modifier
 ){
-    val textColor = if (isSelected) Colors.onBubble else Colors.text
+    val textColor by animateColorAsState(
+        targetValue = if (isSelected) Colors.onBubble else Colors.text,
+        animationSpec = tween(600)
+    )
     Box(
         modifier = modifier.size(40.dp),
         contentAlignment = Alignment.Center
     ) {
         BasicText(
             text = title,
-            style = sizePickerTitles.copy(color = textColor)
+            style = sizePickerTitles,
+            modifier = Modifier.graphicsLayer {
+                colorFilter = ColorFilter.tint(textColor)
+            }
         )
     }
 
@@ -80,7 +94,7 @@ private fun SingleOptionItem(
 private fun SizePickerPreview() {
     var selectedOptionIndex: Int by remember { mutableIntStateOf(0) }
     SizePicker(
-        options = listOf("S", "M", "L", "XL"),
+        options = listOf("S", "M", "L"),
         selectedIndex = selectedOptionIndex,
         onChangesSelectedOption = { selectedOptionIndex = it}
     )

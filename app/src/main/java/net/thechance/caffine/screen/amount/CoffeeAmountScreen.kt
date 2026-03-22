@@ -1,5 +1,11 @@
 package net.thechance.caffine.screen.amount
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +59,14 @@ private fun CoffeeAmountContent(
     state: CoffeeAmountScreenState,
     interactions: CoffeeAmountInteractions,
 ) {
+    val cupScale by animateFloatAsState(
+        targetValue = when(state.cupSizeIndex) {
+            0 -> 0.77f
+            2 -> 1.23f
+            else -> 1f
+        },
+        animationSpec = tween(600)
+    )
     Column(
         modifier = Modifier.fillMaxSize()
             .background(Colors.background),
@@ -65,12 +80,27 @@ private fun CoffeeAmountContent(
             modifier = Modifier.fillMaxWidth()
                 .height(340.dp)
         ) {
-            BasicText(
-                text = "${state.cupSizeInMl} ML",
-                style = amountText.copy(color = Colors.text),
-                modifier = Modifier.padding(top = 64.dp, start = 16.dp)
+            AnimatedContent(
+                targetState = state.cupSizeInMl,
+                transitionSpec = {
+                    (fadeIn(tween(600))
+                        .togetherWith(fadeOut(tween(600))))
+                }
+            ) { cupSizeInMl ->
+                BasicText(
+                    text = "$cupSizeInMl ML",
+                    style = amountText.copy(color = Colors.text),
+                    modifier = Modifier.padding(top = 64.dp, start = 16.dp)
+                )
+            }
+
+            Cup(
+                modifier = Modifier.align(Alignment.Center)
+                    .graphicsLayer {
+                        scaleX = cupScale
+                        scaleY = cupScale
+                    }
             )
-            Cup(Modifier.align(Alignment.Center))
         }
         SizePicker(
             options = state.availableSizes,
