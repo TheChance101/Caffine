@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import net.thechance.caffine.R
 import net.thechance.caffine.component.AppBar
 import net.thechance.caffine.component.CaffinePicker
+import net.thechance.caffine.component.CoffeeButton
 import net.thechance.caffine.style.Colors
 import net.thechance.caffine.component.Cup
 import net.thechance.caffine.component.SizePicker
@@ -83,34 +84,12 @@ private fun CoffeeAmountContent(
             modifier = Modifier.padding(top = 16.dp)
         )
 
-        Button(
-            shape = RoundedCornerShape(100),
+        CoffeeButton(
+            caption = "Continue",
             onClick = interactions::onClickContinue,
+            icon = painterResource(R.drawable.arrow_next),
             modifier = Modifier.padding(top = 92.dp)
-                .height(56.dp)
-                .dropShadow(
-                    shape = RoundedCornerShape(100),
-                    shadow = Shadow(
-                        radius = 12.dp,
-                        spread = 0.dp,
-                        color = Colors.buttonShadow,
-                        offset = DpOffset(x = 0.dp, 6.dp)
-                    )
-                ),
-            colors = ButtonDefaults.buttonColors().copy(
-                containerColor = Colors.buttonColor
-            ),
-            contentPadding = PaddingValues(horizontal = 32.dp)
-        ) {
-            Text(
-                text = "Continue",
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Icon(
-                painter = painterResource(R.drawable.arrow_next),
-                contentDescription = "next arrow icon"
-            )
-        }
+        )
     }
 }
 
